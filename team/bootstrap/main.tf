@@ -71,16 +71,19 @@ resource "google_iam_workload_identity_pool_provider" "github" {
 
   # attribute.ref gör att editor-kontot kan bindas till bara main nedan.
   attribute_mapping = {
-    "google.subject"       = "assertion.sub"
-    "attribute.repository" = "assertion.repository"
-    "attribute.ref"        = "assertion.ref"
+    "google.subject"          = "assertion.sub"
+    "attribute.repository"    = "assertion.repository"
+    "attribute.repository_id" = "assertion.repository_id"
+    "attribute.ref"           = "assertion.ref"
   }
 
   oidc {
     issuer_uri = "https://token.actions.githubusercontent.com"
   }
 
-  attribute_condition = "assertion.repository == '${var.github_repo}'"
+  # Repots id ändras inte när repot flyttas eller byter namn, till skillnad
+  # från namnet. Ett nytt repo som tar det gamla namnet får inte heller in.
+  attribute_condition = "assertion.repository_id == '${var.github_repository_id}'"
 }
 
 # GitHub Actions authenticates via Workload Identity Federation.
@@ -97,7 +100,7 @@ resource "google_project_iam_member" "cicd_editor" {
 }
 
 # Editor-kontot får bara användas från main. Providern släpper redan bara
-# in var.github_repo, så ref räcker här. Tidigare gällde bindningen hela repot,
+# in var.github_repository_id, så ref räcker här. Tidigare gällde bindningen hela repot,
 # och då gav en workflow på vilken gren som helst, eller i en PR, editor över
 # hela det delade projektet utan review.
 resource "google_service_account_iam_member" "cicd_workload_identity" {
@@ -130,6 +133,6 @@ resource "google_storage_bucket_iam_member" "cicd_plan_state" {
 resource "google_service_account_iam_member" "cicd_plan_workload_identity" {
   service_account_id = google_service_account.cicd_plan.name
   role               = "roles/iam.workloadIdentityUser"
-  member             = "principalSet://iam.googleapis.com/${google_iam_workload_identity_pool.github.name}/attribute.repository/${var.github_repo}"
+  member             = "principalSet://iam.googleapis.com/${google_iam_workload_identity_pool.github.name}/attribute.repository_id/${var.github_repository_id}"
 }
 

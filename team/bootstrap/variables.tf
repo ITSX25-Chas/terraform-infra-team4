@@ -13,7 +13,7 @@ variable "team_members" {
   type        = list(string)
 }
 
-variable "github_repo" {
-  description = "GitHub repository in 'owner/repo' format allowed to authenticate via WIF"
+variable "github_repository_id" {
+  description = "Numeriskt id för GitHub-repot som får autentisera via WIF (gh api repos/OWNER/REPO --jq .id)"
   type        = string
 }
