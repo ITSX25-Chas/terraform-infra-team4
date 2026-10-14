@@ -1,6 +1,6 @@
 terraform {
   backend "gcs" {
-    bucket = "team4-tfstate-fd20a3b0" # namn på bucket från bootstrap
+    bucket = "itsx25-comerit-team4-tfstate" # förberedd av Comerit
     prefix = "terraform/state"
   }
 }
