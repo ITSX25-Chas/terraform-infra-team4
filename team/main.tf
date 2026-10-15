@@ -107,14 +107,9 @@ resource "google_compute_instance" "jumphost" {
 
   boot_disk {
     initialize_params {
-      image = "${var.project_id}/debian"
+      image = "debian-cloud/debian-12"
       size  = 20
     }
-  }
-
-  service_account {
-    email  = "team${var.team_id}-jumphost@${var.project_id}.iam.gserviceaccount.com"
-    scopes = ["cloud-platform"]
   }
 
   network_interface {
@@ -379,7 +374,7 @@ resource "google_compute_instance" "primary" {
 
   boot_disk {
     initialize_params {
-      image = "${var.project_id}/debian"
+      image = "debian-cloud/debian-12"
       size  = 20
     }
   }

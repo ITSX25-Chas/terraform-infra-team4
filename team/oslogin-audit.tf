@@ -34,26 +34,24 @@
 # TODO: begränsa sinkfiltret till team 4:s instanser när en riktig post setts
 # i Logs Explorer.
 
-# Delat projekt: stäng inte av API:et för andra team vid destroy.
-resource "google_project_service" "pubsub" {
-  project            = var.project_id
-  service            = "pubsub.googleapis.com"
-  disable_on_destroy = false
-}
-
-resource "google_pubsub_topic" "oslogin_audit" {
-  name = "team${var.team_id}-oslogin-audit"
-
-  depends_on = [google_project_service.pubsub]
-}
-
-resource "google_pubsub_subscription" "falco" {
-  name  = "team${var.team_id}-oslogin-audit-falco"
-  topic = google_pubsub_topic.oslogin_audit.id
-
-  message_retention_duration = "86400s"
-
-  expiration_policy {
-    ttl = ""
-  }
-}
+# pubsub.googleapis.com slås på centralt av Comerit i itsx25-comerit. CI-kontot
+# saknar serviceusage.services.enable, så API:et hanteras inte här.
+#
+# Topic och prenumeration är parkerade: i itsx25-comerit saknar team4-cicd
+# pubsub.topics.create (403 i deployen 2026-10-15). Aktiveras igen när Comerit
+# gett kontot Pub/Sub-rättigheter, eller när punkt 6 tas upp igen.
+#
+# resource "google_pubsub_topic" "oslogin_audit" {
+#   name = "team${var.team_id}-oslogin-audit"
+# }
+#
+# resource "google_pubsub_subscription" "falco" {
+#   name  = "team${var.team_id}-oslogin-audit-falco"
+#   topic = google_pubsub_topic.oslogin_audit.id
+#
+#   message_retention_duration = "86400s"
+#
+#   expiration_policy {
+#     ttl = ""
+#   }
+# }
