@@ -58,8 +58,12 @@ jobs:
           tflint_version: v0.64.0
 
       # Hämtar google-pluginet en gång; det cachas sedan för båda körningarna.
+      # Med token går anropet mot GitHubs API inte på runnerns delade
+      # IP-gräns för anonyma anrop, som annars ger 403 rate limit exceeded.
       - name: TFLint Init
         run: tflint --init
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
 
       - name: TFLint (team)
         run: tflint --format compact

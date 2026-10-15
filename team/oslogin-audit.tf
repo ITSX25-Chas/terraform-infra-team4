@@ -36,18 +36,22 @@
 
 # pubsub.googleapis.com slås på centralt av Comerit i itsx25-comerit. CI-kontot
 # saknar serviceusage.services.enable, så API:et hanteras inte här.
-
-resource "google_pubsub_topic" "oslogin_audit" {
-  name = "team${var.team_id}-oslogin-audit"
-}
-
-resource "google_pubsub_subscription" "falco" {
-  name  = "team${var.team_id}-oslogin-audit-falco"
-  topic = google_pubsub_topic.oslogin_audit.id
-
-  message_retention_duration = "86400s"
-
-  expiration_policy {
-    ttl = ""
-  }
-}
+#
+# Topic och prenumeration är parkerade: i itsx25-comerit saknar team4-cicd
+# pubsub.topics.create (403 i deployen 2026-10-15). Aktiveras igen när Comerit
+# gett kontot Pub/Sub-rättigheter, eller när punkt 6 tas upp igen.
+#
+# resource "google_pubsub_topic" "oslogin_audit" {
+#   name = "team${var.team_id}-oslogin-audit"
+# }
+#
+# resource "google_pubsub_subscription" "falco" {
+#   name  = "team${var.team_id}-oslogin-audit-falco"
+#   topic = google_pubsub_topic.oslogin_audit.id
+#
+#   message_retention_duration = "86400s"
+#
+#   expiration_policy {
+#     ttl = ""
+#   }
+# }
