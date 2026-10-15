@@ -34,17 +34,11 @@
 # TODO: begränsa sinkfiltret till team 4:s instanser när en riktig post setts
 # i Logs Explorer.
 
-# Delat projekt: stäng inte av API:et för andra team vid destroy.
-resource "google_project_service" "pubsub" {
-  project            = var.project_id
-  service            = "pubsub.googleapis.com"
-  disable_on_destroy = false
-}
+# pubsub.googleapis.com slås på centralt av Comerit i itsx25-comerit. CI-kontot
+# saknar serviceusage.services.enable, så API:et hanteras inte här.
 
 resource "google_pubsub_topic" "oslogin_audit" {
   name = "team${var.team_id}-oslogin-audit"
-
-  depends_on = [google_project_service.pubsub]
 }
 
 resource "google_pubsub_subscription" "falco" {
